@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "dpo2u-lgpd-kit": {
+      "command": "node",
+      "args": [
+        "/opt/dpo2u-lgpd-kit/dist/mcp-server.js"
+      ],
+      "env": {
+        "NODE_PATH": "/opt/dpo2u-lgpd-kit/node_modules"
+      }
+    }
+  }
+}
