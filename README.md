@@ -291,6 +291,8 @@ npm run adequacao -- --model "qwen2.5:1.5b-instruct"
 - Execuções subsequentes são mais rápidas (modelo fica em cache)
 - Modelos menores carregam mais rápido mas podem ter qualidade menor
 
+> 🚀 **Para otimização avançada**, veja: [PERFORMANCE.md](PERFORMANCE.md)
+
 ## 🤝 Contribuição
 
 ```bash
