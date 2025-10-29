@@ -1,4 +1,4 @@
-import { OllamaClient } from '../../lib/ollama.js';
+import { LanguageModelClient } from '../../lib/llm.js';
 import { Logger } from '../../lib/logger.js';
 import { Empresa, DataFlow, ToolResult } from '../../types/index.js';
 import fs from 'fs';
@@ -6,7 +6,7 @@ import path from 'path';
 
 export class LegalBasisTool {
   constructor(
-    private ollama: OllamaClient,
+    private llm: LanguageModelClient,
     private logger: Logger
   ) {}
 
@@ -58,7 +58,7 @@ X - proteção do crédito
 Responda apenas com o número romano e nome: "V - execução de contrato"
 `;
 
-      const response = await this.ollama.generateText(prompt);
+      const response = await this.llm.generateText(prompt);
       const baseLegal = response.trim() || 'V - execução de contrato';
 
       basesLegais.push({

@@ -1,4 +1,4 @@
-import { OllamaClient } from '../../lib/ollama.js';
+import { LanguageModelClient } from '../../lib/llm.js';
 import { Logger } from '../../lib/logger.js';
 import { Empresa, DataFlow, ToolResult } from '../../types/index.js';
 import fs from 'fs';
@@ -6,7 +6,7 @@ import path from 'path';
 
 export class DpaTool {
   constructor(
-    private ollama: OllamaClient,
+    private llm: LanguageModelClient,
     private logger: Logger
   ) {}
 

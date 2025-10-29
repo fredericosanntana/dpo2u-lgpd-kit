@@ -1,4 +1,4 @@
-import { OllamaClient } from '../../lib/ollama.js';
+import { LanguageModelClient } from '../../lib/llm.js';
 import { Logger } from '../../lib/logger.js';
 import { Empresa, MaturityResult, ToolResult } from '../../types/index.js';
 import fs from 'fs';
@@ -7,7 +7,7 @@ import PDFDocument from 'pdfkit';
 
 export class MaturityTool {
   constructor(
-    private ollama: OllamaClient,
+    private llm: LanguageModelClient,
     private logger: Logger
   ) {}
 
@@ -112,7 +112,7 @@ Responda no formato JSON:
 ]
 `;
 
-    const response = await this.ollama.generateText(prompt);
+    const response = await this.llm.generateText(prompt);
 
     try {
       const jsonMatch = response.match(/\\[[\\s\\S]*\\]/);

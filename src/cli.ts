@@ -5,6 +5,9 @@ import inquirer from 'inquirer';
 import fs from 'fs';
 import path from 'path';
 import { OllamaClient } from './lib/ollama.js';
+import { AnthropicClient } from './lib/anthropic.js';
+import { CodexClient } from './lib/codex.js';
+import { LanguageModelClient } from './lib/llm.js';
 import { Logger } from './lib/logger.js';
 import { validateCNPJ, validateEmail, sanitizeFileName } from './lib/validator.js';
 import { CompanyCache } from './lib/cache.js';
@@ -22,46 +25,101 @@ program
   .command('adequacao')
   .description('Executa fluxo completo de adequação LGPD')
   .option('--output <dir>', 'Diretório de saída', './compliance-output')
+  .option('--provider <provider>', 'Provedor de IA (ollama|claude|codex)', 'ollama')
   .option('--ollama-url <url>', 'URL do Ollama', 'http://localhost:11434')
-  .option('--model <model>', 'Modelo do Ollama', 'qwen2.5:3b-instruct')
+  .option('--model <model>', 'Modelo do provedor de IA')
+  .option('--anthropic-api-key <key>', 'Chave de API para o Claude (Anthropic)')
+  .option('--anthropic-base-url <url>', 'URL da API do Claude (Anthropic)')
+  .option('--anthropic-model <model>', 'Modelo padrão do Claude (Anthropic)')
+  .option('--openai-api-key <key>', 'Chave de API para o Codex (OpenAI)')
+  .option('--openai-base-url <url>', 'URL da API do Codex (OpenAI)')
+  .option('--openai-model <model>', 'Modelo padrão do Codex (OpenAI)')
   .action(async (options) => {
-    console.log('🚀 DPO2U LGPD Kit - Adequação Completa\\n');
+    console.log('🚀 DPO2U LGPD Kit - Adequação Completa\n');
 
-    // Verificar Ollama
-    const ollama = new OllamaClient({
-      url: options.ollamaUrl,
-      model: options.model
-    });
+    const provider = (options.provider ?? 'ollama').toLowerCase();
+    const providedModel = options.model as string | undefined;
+    let model: string;
+    let llm: LanguageModelClient;
 
-    console.log('🔍 Verificando dependências...');
+    if (provider === 'ollama') {
+      model = providedModel ?? 'qwen2.5:3b-instruct';
+      llm = new OllamaClient({
+        url: options.ollamaUrl,
+        model
+      });
+    } else if (provider === 'claude') {
+      const apiKey = options.anthropicApiKey || process.env.ANTHROPIC_API_KEY;
+      if (!apiKey) {
+        console.error('❌ Claude (Anthropic) requer uma chave de API. Informe via --anthropic-api-key ou variável ANTHROPIC_API_KEY');
+        process.exit(1);
+      }
 
-    const isHealthy = await ollama.checkHealth();
-    if (!isHealthy) {
-      console.error('❌ Ollama não está rodando ou não acessível');
-      console.log('💡 Verifique se o Ollama está rodando em:', options.ollamaUrl);
-      console.log('💡 Comando: ollama serve');
+      model = providedModel ?? options.anthropicModel ?? process.env.ANTHROPIC_MODEL ?? 'claude-3-5-sonnet-20241022';
+      const apiUrl = options.anthropicBaseUrl || process.env.ANTHROPIC_API_URL;
+      llm = new AnthropicClient({
+        apiKey,
+        model,
+        apiUrl
+      });
+    } else if (provider === 'codex') {
+      const apiKey = options.openaiApiKey || process.env.OPENAI_API_KEY;
+      if (!apiKey) {
+        console.error('❌ Codex (OpenAI) requer uma chave de API. Informe via --openai-api-key ou variável OPENAI_API_KEY');
+        process.exit(1);
+      }
+
+      model = providedModel ?? options.openaiModel ?? process.env.OPENAI_MODEL ?? 'gpt-4o-mini';
+      const apiUrl = options.openaiBaseUrl || process.env.OPENAI_BASE_URL;
+      llm = new CodexClient({
+        apiKey,
+        model,
+        apiUrl
+      });
+    } else {
+      console.error(`❌ Provedor de IA desconhecido: ${provider}`);
       process.exit(1);
     }
 
-    const models = await ollama.listModels();
-    if (!models.includes(options.model)) {
-      console.error(`❌ Modelo ${options.model} não encontrado`);
+    console.log('🔍 Verificando dependências...');
+
+    const isHealthy = await llm.checkHealth();
+    if (!isHealthy) {
+      if (provider === 'ollama') {
+        console.error('❌ Ollama não está rodando ou não acessível');
+        console.log('💡 Verifique se o Ollama está rodando em:', options.ollamaUrl);
+        console.log('💡 Comando: ollama serve');
+      } else if (provider === 'claude') {
+        console.error('❌ Não foi possível conectar ao Claude (Anthropic)');
+        console.log('💡 Verifique se a variável ANTHROPIC_API_KEY está configurada corretamente');
+      } else {
+        console.error('❌ Não foi possível conectar ao Codex (OpenAI)');
+        console.log('💡 Verifique se a variável OPENAI_API_KEY está configurada corretamente');
+      }
+      process.exit(1);
+    }
+
+    const models = await llm.listModels();
+    if (models.length > 0 && !models.includes(llm.getModelName())) {
+      console.error(`❌ Modelo ${llm.getModelName()} não encontrado para o provedor ${llm.getProviderName()}`);
       console.log('📋 Modelos disponíveis:', models.join(', '));
-      console.log(`💡 Para instalar: ollama pull ${options.model}`);
+      if (provider === 'ollama') {
+        console.log(`💡 Para instalar: ollama pull ${llm.getModelName()}`);
+      }
       process.exit(1);
     }
 
     // Tentar carregar o modelo
     try {
-      await ollama.ensureModelLoaded();
+      await llm.ensureModelReady();
     } catch (error) {
       console.error('❌', (error as Error).message);
       process.exit(1);
     }
 
-    console.log('✅ Ollama conectado e modelo pronto\\n');
+    console.log(`✅ Provedor ${llm.getProviderName()} conectado e modelo ${llm.getModelName()} pronto\n`);
 
-    // Inicializar cache
+// Inicializar cache
     const cache = new CompanyCache(options.output);
 
     // Verificar se existem empresas anteriores
@@ -172,7 +230,7 @@ program
     cache.saveCompany(empresa, outputDir, false);
 
     // Executar fluxo de adequação
-    const flow = new AdequacaoFlow(ollama, logger, outputDir);
+    const flow = new AdequacaoFlow(llm, logger, outputDir);
 
     try {
       await flow.execute(empresa);
