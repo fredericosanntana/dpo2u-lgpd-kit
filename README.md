@@ -273,6 +273,24 @@ curl http://localhost:11434/api/tags
 ollama serve
 ```
 
+### **Erro: "timeout of 60000ms exceeded"**
+```bash
+# O modelo pode estar sendo carregado pela primeira vez
+# Aguarde alguns minutos ou use modelo menor
+
+# Modelos mais leves (mais rápidos):
+ollama pull qwen2.5:1.5b-instruct
+ollama pull phi3:3.8b-mini-instruct
+
+# Usar modelo menor:
+npm run adequacao -- --model "qwen2.5:1.5b-instruct"
+```
+
+### **Primeira execução demorada**
+- O Ollama pode demorar 2-5 minutos para carregar o modelo na primeira vez
+- Execuções subsequentes são mais rápidas (modelo fica em cache)
+- Modelos menores carregam mais rápido mas podem ter qualidade menor
+
 ## 🤝 Contribuição
 
 ```bash

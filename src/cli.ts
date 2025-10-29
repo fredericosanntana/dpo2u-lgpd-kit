@@ -38,6 +38,7 @@ program
     if (!isHealthy) {
       console.error('❌ Ollama não está rodando ou não acessível');
       console.log('💡 Verifique se o Ollama está rodando em:', options.ollamaUrl);
+      console.log('💡 Comando: ollama serve');
       process.exit(1);
     }
 
@@ -45,10 +46,19 @@ program
     if (!models.includes(options.model)) {
       console.error(`❌ Modelo ${options.model} não encontrado`);
       console.log('📋 Modelos disponíveis:', models.join(', '));
+      console.log(`💡 Para instalar: ollama pull ${options.model}`);
       process.exit(1);
     }
 
-    console.log('✅ Ollama conectado com sucesso\\n');
+    // Tentar carregar o modelo
+    try {
+      await ollama.ensureModelLoaded();
+    } catch (error) {
+      console.error('❌', (error as Error).message);
+      process.exit(1);
+    }
+
+    console.log('✅ Ollama conectado e modelo pronto\\n');
 
     // Coleta de informações da empresa
     console.log('📋 Vamos coletar algumas informações sobre sua empresa:\\n');
