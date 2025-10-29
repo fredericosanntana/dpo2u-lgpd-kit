@@ -74,8 +74,8 @@ export class ReportTool {
     doc.text(`Status: ${relatorio.resumo.status}`, 50, 130);
 
     doc.fontSize(14).text('Documentos Gerados:', 50, 170);
-    relatorio.documentos.forEach((doc: string, index: number) => {
-      doc.fontSize(10).text(`✓ ${doc}`, 70, 195 + (index * 15));
+    relatorio.documentos.forEach((arquivo: string, index: number) => {
+      doc.fontSize(10).text(`✓ ${arquivo}`, 70, 195 + (index * 15));
     });
 
     doc.fontSize(14).text('Próximos Passos:', 50, 280);
