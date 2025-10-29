@@ -8,7 +8,8 @@
     "build": "tsc",
     "start": "node dist/cli.js",
     "dev": "tsc && node dist/cli.js",
-    "adequacao": "node dist/cli.js adequacao"
+    "adequacao": "node dist/cli.js adequacao",
+    "cache": "node dist/cli.js cache"
   },
   "bin": {
     "dpo2u-mcp": "dist/cli.js"

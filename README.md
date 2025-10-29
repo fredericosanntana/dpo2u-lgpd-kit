@@ -72,13 +72,34 @@ npm run build
 # Execute o fluxo completo de adequação
 npm run adequacao
 
+# Gerenciar cache de empresas processadas
+npm run cache
+
+# Ver todos os comandos disponíveis
+node dist/cli.js --help
+
 # Ou diretamente
 node dist/cli.js adequacao
+node dist/cli.js cache
 ```
 
 ## 🎮 Como Funciona
 
-### 1️⃣ **Coleta de Informações** (5 min)
+### 🔄 **Sistema de Cache Inteligente**
+O sistema automaticamente salva os dados da empresa para evitar re-digitação:
+
+- **Primeira execução**: Coleta dados da empresa
+- **Execuções seguintes**: Oferece opções:
+  - 🔄 Usar empresa existente
+  - ➕ Adicionar nova empresa
+  - 🗑️ Limpar cache
+
+```bash
+# Visualizar empresas salvas
+npm run cache
+```
+
+### 1️⃣ **Coleta de Informações** (5 min - apenas primeira vez)
 - Nome da empresa, CNPJ, setor
 - Tamanho (micro, pequena, média, grande)
 - Se coleta dados pessoais
@@ -94,6 +115,7 @@ node dist/cli.js adequacao
 - 8 documentos profissionais gerados
 - Log de auditoria para evidências
 - Pacote ZIP pronto para advogado/auditor
+- **Cache salvo** para reutilização
 
 ### 🏃‍♂️ **Exemplo de Execução**
 
