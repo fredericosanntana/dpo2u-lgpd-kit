@@ -57,12 +57,14 @@ ollama serve
 git clone https://github.com/fredericosanntana/dpo2u-lgpd-kit.git
 cd dpo2u-lgpd-kit
 
-# Instale dependências
+# Instale dependências (OBRIGATÓRIO!)
 npm install
 
 # Compile TypeScript
 npm run build
 ```
+
+> ⚠️ **Importante**: Sempre execute `npm install` após clonar o repositório para instalar todas as dependências, incluindo os tipos TypeScript necessários.
 
 ### Uso
 
@@ -243,6 +245,33 @@ R: Sim, todos os templates são editáveis no código fonte.
 
 ### **P: E se minha empresa for muito específica?**
 R: Sistema gera base sólida. Customize manualmente documentos específicos.
+
+## 🔧 Troubleshooting
+
+### **Erro: "Could not find a declaration file for module 'pdfkit'"**
+```bash
+# Solução: Instalar dependências
+npm install
+npm run build
+```
+
+### **Erro: "Modelo X não encontrado"**
+```bash
+# Verificar modelos disponíveis no Ollama
+ollama list
+
+# Usar modelo disponível
+npm run adequacao -- --model "nome-do-modelo-disponivel"
+```
+
+### **Erro: "Ollama não acessível"**
+```bash
+# Verificar se Ollama está rodando
+curl http://localhost:11434/api/tags
+
+# Iniciar Ollama se necessário
+ollama serve
+```
 
 ## 🤝 Contribuição
 
