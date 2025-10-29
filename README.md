@@ -25,7 +25,7 @@ Sistema open-source que permite que **qualquer empresa brasileira** obtenha conf
 
 | Documento | Arquivo | Descrição |
 |-----------|---------|-----------|
-| 📊 **Avaliação de Maturidade** | `maturidade.pdf` | Score 0-100 + gaps identificados |
+| 📊 **Avaliação de Maturidade** | `maturidade.pdf` | Score 0-100 + 23 perguntas categorizadas |
 | 🗺️ **Inventário de Dados** | `inventario.csv` | Mapeamento completo de fluxos |
 | ⚖️ **Bases Legais** | `bases-legais.csv` | Art. 7º LGPD por atividade |
 | 🔍 **DPIA** | `dpia.pdf` | Avaliação de impacto detalhada |

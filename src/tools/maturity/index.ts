@@ -43,16 +43,44 @@ export class MaturityTool {
 
   private gerarPerguntas(): string[] {
     return [
+      // Governança e Organização
       'A empresa possui política de privacidade publicada e atualizada?',
       'Existe um encarregado (DPO) nomeado e treinado?',
-      'A empresa realiza avaliação de impacto (DPIA) para novos projetos?',
-      'Existe controle formal de solicitações de titulares de dados?',
-      'A empresa possui contratos adequados com fornecedores que processam dados?',
+      'A empresa possui política corporativa abrangente de proteção de dados pessoais?',
+      'Estão claramente definidas as responsabilidades de cada área sobre proteção de dados?',
+
+      // Bases Legais e Tratamento
+      'Para cada tratamento existe base legal específica identificada e documentada?',
+      'A empresa identificou e possui controles especiais para dados pessoais sensíveis?',
       'Existe inventário atualizado de tratamento de dados pessoais?',
-      'A empresa possui plano de resposta a incidentes de segurança?',
-      'São realizados treinamentos regulares sobre LGPD para colaboradores?',
+      'A empresa realiza avaliação de impacto (DPIA) para novos projetos?',
+
+      // Direitos dos Titulares
+      'Existe controle formal de solicitações de titulares de dados?',
+      'Existe canal específico e divulgado para exercício de direitos dos titulares?',
+      'Existem procedimentos padronizados para atender cada tipo de solicitação?',
+      'A empresa cumpre os prazos legais para resposta às solicitações?',
+
+      // Segurança e Tecnologia
+      'A empresa possui medidas técnicas adequadas de segurança?',
+      'Dados pessoais sensíveis são adequadamente criptografados?',
+      'Existe controle rigoroso de acesso baseado no princípio do menor privilégio?',
+      'Sistemas mantêm logs de acesso e alteração de dados pessoais?',
+
+      // Contratos e Operadores
+      'A empresa possui contratos adequados com fornecedores que processam dados?',
       'Existe processo formal para coleta e gestão de consentimentos?',
-      'A empresa possui medidas técnicas adequadas de segurança?'
+
+      // Gestão de Incidentes
+      'A empresa possui plano de resposta a incidentes de segurança?',
+
+      // Treinamento e Conscientização
+      'São realizados treinamentos regulares sobre LGPD para colaboradores?',
+      'Todos os pontos de coleta possuem avisos claros sobre o tratamento?',
+
+      // Monitoramento e Auditoria
+      'A empresa possui KPIs para medir a eficácia do programa de privacidade?',
+      'São realizadas auditorias internas regulares de conformidade?'
     ];
   }
 
@@ -112,52 +140,103 @@ Responda no formato JSON:
     else if (score < 80) nivel = 'Intermediário';
     else nivel = 'Avançado';
 
+    // Categorizar gaps por área
     const gaps = respostas
       .filter(r => r.resposta < 7)
       .map(r => r.pergunta);
 
-    const planoAcao = this.gerarPlanoAcao(gaps, nivel);
+    const gapsPorCategoria = this.categorizarGaps(gaps);
+    const planoAcao = this.gerarPlanoAcaoDetalhado(gapsPorCategoria, nivel);
 
     return { score, nivel, gaps, planoAcao };
   }
 
-  private gerarPlanoAcao(gaps: string[], nivel: MaturityResult['nivel']): string[] {
+  private categorizarGaps(gaps: string[]): { [categoria: string]: string[] } {
+    const categorias: { [categoria: string]: string[] } = {
+      'Governança': [],
+      'Bases Legais': [],
+      'Direitos dos Titulares': [],
+      'Segurança': [],
+      'Contratos': [],
+      'Incidentes': [],
+      'Treinamento': [],
+      'Monitoramento': []
+    };
+
+    gaps.forEach(gap => {
+      if (gap.includes('política') || gap.includes('responsabilidades') || gap.includes('corporativa')) {
+        categorias['Governança'].push(gap);
+      } else if (gap.includes('base legal') || gap.includes('sensíveis') || gap.includes('inventário') || gap.includes('DPIA')) {
+        categorias['Bases Legais'].push(gap);
+      } else if (gap.includes('solicitações') || gap.includes('canal') || gap.includes('procedimentos') || gap.includes('prazos')) {
+        categorias['Direitos dos Titulares'].push(gap);
+      } else if (gap.includes('segurança') || gap.includes('criptograf') || gap.includes('acesso') || gap.includes('logs')) {
+        categorias['Segurança'].push(gap);
+      } else if (gap.includes('contratos') || gap.includes('consentimentos')) {
+        categorias['Contratos'].push(gap);
+      } else if (gap.includes('incidentes')) {
+        categorias['Incidentes'].push(gap);
+      } else if (gap.includes('treinamentos') || gap.includes('avisos')) {
+        categorias['Treinamento'].push(gap);
+      } else if (gap.includes('KPIs') || gap.includes('auditorias')) {
+        categorias['Monitoramento'].push(gap);
+      }
+    });
+
+    // Remover categorias vazias
+    Object.keys(categorias).forEach(key => {
+      if (categorias[key].length === 0) {
+        delete categorias[key];
+      }
+    });
+
+    return categorias;
+  }
+
+  private gerarPlanoAcaoDetalhado(gapsPorCategoria: { [categoria: string]: string[] }, nivel: MaturityResult['nivel']): string[] {
     const acoes: string[] = [];
 
-    if (gaps.some(g => g.includes('política de privacidade'))) {
-      acoes.push('Criar/atualizar política de privacidade conforme LGPD');
-    }
-
-    if (gaps.some(g => g.includes('encarregado'))) {
-      acoes.push('Nomear e treinar encarregado de dados (DPO)');
-    }
-
-    if (gaps.some(g => g.includes('DPIA'))) {
-      acoes.push('Implementar processo de avaliação de impacto (DPIA)');
-    }
-
-    if (gaps.some(g => g.includes('contratos'))) {
-      acoes.push('Revisar e adequar contratos com fornecedores');
-    }
-
-    if (gaps.some(g => g.includes('inventário'))) {
-      acoes.push('Criar inventário completo de tratamento de dados');
-    }
-
-    if (gaps.some(g => g.includes('incidentes'))) {
-      acoes.push('Desenvolver plano de resposta a incidentes');
-    }
-
-    if (gaps.some(g => g.includes('treinamento'))) {
-      acoes.push('Implementar programa de treinamentos em LGPD');
-    }
-
-    if (gaps.some(g => g.includes('segurança'))) {
-      acoes.push('Implementar medidas técnicas de segurança');
-    }
+    Object.entries(gapsPorCategoria).forEach(([categoria, gaps]) => {
+      switch (categoria) {
+        case 'Governança':
+          acoes.push('Estabelecer estrutura de governança de dados com políticas claras');
+          acoes.push('Definir papéis e responsabilidades específicas para proteção de dados');
+          break;
+        case 'Bases Legais':
+          acoes.push('Mapear e documentar bases legais para todos os tratamentos');
+          acoes.push('Implementar controles específicos para dados sensíveis');
+          acoes.push('Atualizar inventário de dados com detalhamento por finalidade');
+          break;
+        case 'Direitos dos Titulares':
+          acoes.push('Criar canal dedicado para exercício de direitos dos titulares');
+          acoes.push('Padronizar procedimentos de atendimento com prazos definidos');
+          break;
+        case 'Segurança':
+          acoes.push('Implementar criptografia para dados sensíveis');
+          acoes.push('Estabelecer controles de acesso baseados em menor privilégio');
+          acoes.push('Configurar logs de auditoria para acesso a dados pessoais');
+          break;
+        case 'Contratos':
+          acoes.push('Revisar e adequar contratos com fornecedores (DPAs)');
+          acoes.push('Implementar sistema de gestão de consentimentos');
+          break;
+        case 'Incidentes':
+          acoes.push('Desenvolver e testar plano de resposta a incidentes');
+          break;
+        case 'Treinamento':
+          acoes.push('Implementar programa de treinamento contínuo em LGPD');
+          acoes.push('Criar avisos de privacidade em todos os pontos de coleta');
+          break;
+        case 'Monitoramento':
+          acoes.push('Definir KPIs para medir eficácia do programa de privacidade');
+          acoes.push('Estabelecer cronograma de auditorias internas');
+          break;
+      }
+    });
 
     return acoes;
   }
+
 
   private async gerarRelatorioPDF(empresa: Empresa, result: MaturityResult, outputDir: string): Promise<string> {
     const pdfPath = path.join(outputDir, 'maturidade.pdf');
