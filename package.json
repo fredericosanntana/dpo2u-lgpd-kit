@@ -1,0 +1,46 @@
+{
+  "name": "dpo2u-lgpd-kit",
+  "version": "1.0.0",
+  "description": "LGPD Local Compliance Kit - Conformidade LGPD em 1 dia, 100% local",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/cli.js",
+    "dev": "tsc && node dist/cli.js",
+    "adequacao": "node dist/cli.js adequacao"
+  },
+  "bin": {
+    "dpo2u-mcp": "dist/cli.js"
+  },
+  "keywords": [
+    "lgpd",
+    "compliance",
+    "privacy",
+    "gdpr",
+    "local",
+    "brasil"
+  ],
+  "author": "DPO2U",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^12.1.0",
+    "inquirer": "^9.2.0",
+    "axios": "^1.6.2",
+    "date-fns": "^4.1.0",
+    "uuid": "^10.0.0",
+    "archiver": "^7.0.0",
+    "pdfkit": "^0.15.0",
+    "csv-writer": "^1.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/inquirer": "^9.0.0",
+    "@types/uuid": "^10.0.0",
+    "@types/archiver": "^6.0.0",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
