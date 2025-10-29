@@ -1,15 +1,24 @@
 import axios from 'axios';
+import { LanguageModelClient } from './llm.js';
 
 export interface OllamaConfig {
   url: string;
   model: string;
 }
 
-export class OllamaClient {
+export class OllamaClient implements LanguageModelClient {
   private config: OllamaConfig;
 
   constructor(config: OllamaConfig) {
     this.config = config;
+  }
+
+  getProviderName(): string {
+    return 'ollama';
+  }
+
+  getModelName(): string {
+    return this.config.model;
   }
 
   async generateText(prompt: string, system?: string, retries: number = 2): Promise<string> {
@@ -87,6 +96,10 @@ export class OllamaClient {
     } catch {
       return [];
     }
+  }
+
+  async ensureModelReady(): Promise<void> {
+    await this.ensureModelLoaded();
   }
 
   async ensureModelLoaded(): Promise<void> {

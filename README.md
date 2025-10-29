@@ -214,6 +214,10 @@ Resultado: Entregar 10x mais rápido para clientes
 
 ### Modelos de IA Suportados
 
+- **Ollama (local)** – Execução 100% offline usando modelos baixados no seu servidor.
+- **Claude Code (Anthropic)** – Utilize sua conta Anthropic com a mesma automação do MCP.
+- **Codex (OpenAI)** – Aproveite modelos ChatGPT/Codex sem depender do Ollama.
+
 ```bash
 # Padrão (recomendado)
 ollama pull qwen2.5:3b-instruct
@@ -238,6 +242,14 @@ node dist/cli.js adequacao --output "/caminho/personalizado"
 
 # URL do Ollama customizada
 node dist/cli.js adequacao --ollama-url "http://outro-servidor:11434"
+
+# Executar com Claude Code (Anthropic)
+export ANTHROPIC_API_KEY="sua-chave"
+node dist/cli.js adequacao --provider claude --model "claude-3-5-sonnet-20241022"
+
+# Executar com Codex (OpenAI)
+export OPENAI_API_KEY="sua-chave"
+node dist/cli.js adequacao --provider codex --model "gpt-4o-mini"
 ```
 
 ## 📊 Benchmarks
@@ -257,7 +269,7 @@ node dist/cli.js adequacao --ollama-url "http://outro-servidor:11434"
 R: Gera documentação base compliant com LGPD. Recomenda-se revisão jurídica para casos específicos.
 
 ### **P: Funciona offline?**
-R: Sim, após instalação inicial. Apenas o Ollama precisa estar rodando localmente.
+R: Sim, quando você usa o provedor Ollama (local). As integrações com Claude Code e Codex requerem conexão com as APIs respectivas.
 
 ### **P: Suporta outros países?**
 R: Atualmente focado em LGPD (Brasil). GDPR em roadmap.

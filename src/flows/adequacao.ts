@@ -1,4 +1,4 @@
-import { OllamaClient } from '../lib/ollama.js';
+import { LanguageModelClient } from '../lib/llm.js';
 import { Logger } from '../lib/logger.js';
 import { Empresa } from '../types/index.js';
 import { MaturityTool } from '../tools/maturity/index.js';
@@ -15,7 +15,7 @@ import path from 'path';
 
 export class AdequacaoFlow {
   constructor(
-    private ollama: OllamaClient,
+    private llm: LanguageModelClient,
     private logger: Logger,
     private outputDir: string
   ) {}
@@ -25,42 +25,42 @@ export class AdequacaoFlow {
 
     // Etapa 1: Avaliação de Maturidade
     console.log('📊 1/8 - Avaliando maturidade LGPD...');
-    const maturityTool = new MaturityTool(this.ollama, this.logger);
+    const maturityTool = new MaturityTool(this.llm, this.logger);
     const maturityResult = await maturityTool.execute(empresa, this.outputDir);
 
     // Etapa 2: Mapeamento de Dados
     console.log('🗺️  2/8 - Mapeando fluxo de dados...');
-    const dataFlowTool = new DataFlowTool(this.ollama, this.logger);
+    const dataFlowTool = new DataFlowTool(this.llm, this.logger);
     const dataFlowResult = await dataFlowTool.execute(empresa, this.outputDir);
 
     // Etapa 3: Definição de Bases Legais
     console.log('⚖️  3/8 - Definindo bases legais...');
-    const legalBasisTool = new LegalBasisTool(this.ollama, this.logger);
+    const legalBasisTool = new LegalBasisTool(this.llm, this.logger);
     await legalBasisTool.execute(empresa, dataFlowResult.data, this.outputDir);
 
     // Etapa 4: DPIA (Avaliação de Impacto)
     console.log('🔍 4/8 - Gerando DPIA...');
-    const dpiaTool = new DpiaTool(this.ollama, this.logger);
+    const dpiaTool = new DpiaTool(this.llm, this.logger);
     await dpiaTool.execute(empresa, { maturity: maturityResult.data, dataFlow: dataFlowResult.data }, this.outputDir);
 
     // Etapa 5: Política de Privacidade
     console.log('📄 5/8 - Gerando Política de Privacidade...');
-    const policyTool = new PolicyTool(this.ollama, this.logger);
+    const policyTool = new PolicyTool(this.llm, this.logger);
     await policyTool.execute(empresa, dataFlowResult.data, this.outputDir);
 
     // Etapa 6: Contratos com Operadores (DPA)
     console.log('📝 6/8 - Gerando contratos DPA...');
-    const dpaTool = new DpaTool(this.ollama, this.logger);
+    const dpaTool = new DpaTool(this.llm, this.logger);
     await dpaTool.execute(empresa, dataFlowResult.data, this.outputDir);
 
     // Etapa 7: Plano de Resposta a Incidentes
     console.log('🚨 7/8 - Criando plano de resposta a incidentes...');
-    const breachTool = new BreachTool(this.ollama, this.logger);
+    const breachTool = new BreachTool(this.llm, this.logger);
     await breachTool.execute(empresa, this.outputDir);
 
     // Etapa 8: Relatório Final do DPO
     console.log('📋 8/8 - Gerando relatório final...');
-    const reportTool = new ReportTool(this.ollama, this.logger);
+    const reportTool = new ReportTool(this.llm, this.logger);
     await reportTool.execute(empresa, this.outputDir);
 
     // Etapa 9: Empacotamento Final

@@ -1,4 +1,4 @@
-import { OllamaClient } from '../../lib/ollama.js';
+import { LanguageModelClient } from '../../lib/llm.js';
 import { Logger } from '../../lib/logger.js';
 import { Empresa, ToolResult } from '../../types/index.js';
 import fs from 'fs';
@@ -7,7 +7,7 @@ import PDFDocument from 'pdfkit';
 
 export class ReportTool {
   constructor(
-    private ollama: OllamaClient,
+    private llm: LanguageModelClient,
     private logger: Logger
   ) {}
 

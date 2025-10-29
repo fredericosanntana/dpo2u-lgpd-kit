@@ -1,4 +1,4 @@
-import { OllamaClient } from '../../lib/ollama.js';
+import { LanguageModelClient } from '../../lib/llm.js';
 import { Logger } from '../../lib/logger.js';
 import { Empresa, DataFlow, ToolResult } from '../../types/index.js';
 import fs from 'fs';
@@ -7,7 +7,7 @@ import { createObjectCsvWriter } from 'csv-writer';
 
 export class DataFlowTool {
   constructor(
-    private ollama: OllamaClient,
+    private llm: LanguageModelClient,
     private logger: Logger
   ) {}
 
@@ -64,7 +64,7 @@ Responda apenas com uma lista JSON de strings:
 ["Atividade 1", "Atividade 2", "Atividade 3"]
 `;
 
-    const response = await this.ollama.generateText(prompt);
+    const response = await this.llm.generateText(prompt);
 
     try {
       const jsonMatch = response.match(/\\[[\\s\\S]*?\\]/);
@@ -162,7 +162,7 @@ Bases legais comuns:
 `;
 
       try {
-        const response = await this.ollama.generateText(prompt);
+        const response = await this.llm.generateText(prompt);
         const jsonMatch = response.match(/\\{[\\s\\S]*\\}/);
 
         if (jsonMatch) {
