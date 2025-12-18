@@ -44,3 +44,27 @@ export function sanitizeFileName(name: string): string {
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '');
 }
+
+/**
+ * Tenta extrair e parsear JSON de uma string que pode conter markdown
+ */
+export function extractJson<T = any>(text: string): T | null {
+  try {
+    // Tenta encontrar bloco JSON em markdown
+    const jsonMatch = text.match(/```json\s*([\s\S]*?)\s*```/);
+    if (jsonMatch && jsonMatch[1]) {
+      return JSON.parse(jsonMatch[1]);
+    }
+
+    // Tenta encontrar qualquer estrutura parecida com JSON (objeto ou array)
+    const objectMatch = text.match(/(\{[\s\S]*\}|\[[\s\S]*\])/);
+    if (objectMatch && objectMatch[0]) {
+      return JSON.parse(objectMatch[0]);
+    }
+
+    // Tenta parsear o texto inteiro
+    return JSON.parse(text);
+  } catch (error) {
+    return null;
+  }
+}

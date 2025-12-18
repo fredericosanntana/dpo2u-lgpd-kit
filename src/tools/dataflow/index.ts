@@ -1,6 +1,7 @@
 import { LanguageModelClient } from '../../lib/llm.js';
 import { Logger } from '../../lib/logger.js';
 import { Empresa, DataFlow, ToolResult } from '../../types/index.js';
+import { extractJson } from '../../lib/validator.js';
 import fs from 'fs';
 import path from 'path';
 import { createObjectCsvWriter } from 'csv-writer';
@@ -9,7 +10,7 @@ export class DataFlowTool {
   constructor(
     private llm: LanguageModelClient,
     private logger: Logger
-  ) {}
+  ) { }
 
   async execute(empresa: Empresa, outputDir: string): Promise<ToolResult> {
     try {
@@ -60,20 +61,23 @@ Exemplos por setor:
 - SaaS: Cadastro de usuários, Analytics, Suporte técnico
 - Consultoria: Gestão de RH, Contratos com clientes, Relatórios
 
-Responda apenas com uma lista JSON de strings:
+Exemplos por setor:
+- E-commerce: Cadastro de clientes, Processamento de pagamentos, Marketing direto
+- SaaS: Cadastro de usuários, Analytics, Suporte técnico
+- Consultoria: Gestão de RH, Contratos com clientes, Relatórios
+
+IMPORTANTE: Responda APENAS com o JSON. Não use markdown codes.
+Formato:
 ["Atividade 1", "Atividade 2", "Atividade 3"]
 `;
 
     const response = await this.llm.generateText(prompt);
+    const atividades = extractJson<string[]>(response);
 
-    try {
-      const jsonMatch = response.match(/\\[[\\s\\S]*?\\]/);
-      if (jsonMatch) {
-        const atividades = JSON.parse(jsonMatch[0]);
-        return Array.isArray(atividades) ? atividades : [];
-      }
-    } catch (error) {
-      console.warn('Erro ao parsear atividades, usando padrão');
+    if (atividades && Array.isArray(atividades) && atividades.length > 0) {
+      return atividades;
+    } else {
+      console.warn('⚠️ Falha ao identificar atividades via IA, usando padrão. Resposta recebida:', response.substring(0, 100) + '...');
     }
 
     // Fallback baseado no setor
@@ -159,26 +163,28 @@ Bases legais comuns:
 - Cumprimento de obrigação legal
 - Proteção da vida
 - Exercício de direitos
+
+IMPORTANTE:
+- Responda estritamente com o JSON válido.
+- Não inclua explicações extras fora do JSON.
 `;
 
-      try {
-        const response = await this.llm.generateText(prompt);
-        const jsonMatch = response.match(/\\{[\\s\\S]*\\}/);
+      const response = await this.llm.generateText(prompt);
+      const dados = extractJson<any>(response);
 
-        if (jsonMatch) {
-          const dados = JSON.parse(jsonMatch[0]);
-          fluxos.push({
-            atividade,
-            dados: dados.dados || [],
-            finalidade: dados.finalidade || 'Não especificado',
-            baseLegal: dados.baseLegal || 'A definir',
-            retencao: dados.retencao || 'A definir',
-            acesso: dados.acesso || [],
-            destino: dados.destino || 'Sistema interno',
-            operador: empresa.possuiOperadores ? 'A definir' : ''
-          });
-        }
-      } catch (error) {
+      if (dados && dados.dados) {
+        fluxos.push({
+          atividade,
+          dados: dados.dados || [],
+          finalidade: dados.finalidade || 'Não especificado',
+          baseLegal: dados.baseLegal || 'A definir',
+          retencao: dados.retencao || 'A definir',
+          acesso: dados.acesso || [],
+          destino: dados.destino || 'Sistema interno',
+          operador: empresa.possuiOperadores ? 'A definir' : ''
+        });
+      } else {
+        console.warn(`⚠️ Falha ao mapear fluxo para "${atividade}". Usando fallback.`);
         // Fallback com dados básicos
         fluxos.push({
           atividade,

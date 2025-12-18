@@ -7,6 +7,7 @@ import path from 'path';
 import { OllamaClient } from './lib/ollama.js';
 import { AnthropicClient } from './lib/anthropic.js';
 import { CodexClient } from './lib/codex.js';
+import { GeminiClient } from './lib/gemini.js';
 import { LanguageModelClient } from './lib/llm.js';
 import { Logger } from './lib/logger.js';
 import { validateCNPJ, validateEmail, sanitizeFileName } from './lib/validator.js';
@@ -25,7 +26,7 @@ program
   .command('adequacao')
   .description('Executa fluxo completo de adequação LGPD')
   .option('--output <dir>', 'Diretório de saída', './compliance-output')
-  .option('--provider <provider>', 'Provedor de IA (ollama|claude|codex)', 'ollama')
+  .option('--provider <provider>', 'Provedor de IA (ollama|claude|codex|gemini)', 'ollama')
   .option('--ollama-url <url>', 'URL do Ollama', 'http://localhost:11434')
   .option('--model <model>', 'Modelo do provedor de IA')
   .option('--anthropic-api-key <key>', 'Chave de API para o Claude (Anthropic)')
@@ -34,6 +35,9 @@ program
   .option('--openai-api-key <key>', 'Chave de API para o Codex (OpenAI)')
   .option('--openai-base-url <url>', 'URL da API do Codex (OpenAI)')
   .option('--openai-model <model>', 'Modelo padrão do Codex (OpenAI)')
+  .option('--gemini-api-key <key>', 'Chave de API para o Gemini (Google)')
+  .option('--gemini-model <model>', 'Modelo padrão do Gemini (Google)')
+  .option('--input <file>', 'Arquivo JSON com dados da empresa (modo não-interativo)')
   .action(async (options) => {
     console.log('🚀 DPO2U LGPD Kit - Adequação Completa\n');
 
@@ -76,6 +80,18 @@ program
         model,
         apiUrl
       });
+    } else if (provider === 'gemini') {
+      const apiKey = options.geminiApiKey || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+      if (!apiKey) {
+        console.error('❌ Gemini (Google) requer uma chave de API. Informe via --gemini-api-key ou variável GEMINI_API_KEY');
+        process.exit(1);
+      }
+
+      model = providedModel ?? options.geminiModel ?? process.env.GEMINI_MODEL ?? 'gemini-1.5-flash';
+      llm = new GeminiClient({
+        apiKey,
+        model
+      });
     } else {
       console.error(`❌ Provedor de IA desconhecido: ${provider}`);
       process.exit(1);
@@ -92,9 +108,12 @@ program
       } else if (provider === 'claude') {
         console.error('❌ Não foi possível conectar ao Claude (Anthropic)');
         console.log('💡 Verifique se a variável ANTHROPIC_API_KEY está configurada corretamente');
-      } else {
+      } else if (provider === 'codex') {
         console.error('❌ Não foi possível conectar ao Codex (OpenAI)');
         console.log('💡 Verifique se a variável OPENAI_API_KEY está configurada corretamente');
+      } else if (provider === 'gemini') {
+        console.error('❌ Não foi possível conectar ao Gemini (Google)');
+        console.log('💡 Verifique se a variável GEMINI_API_KEY está configurada corretamente');
       }
       process.exit(1);
     }
@@ -119,7 +138,7 @@ program
 
     console.log(`✅ Provedor ${llm.getProviderName()} conectado e modelo ${llm.getModelName()} pronto\n`);
 
-// Inicializar cache
+    // Inicializar cache
     const cache = new CompanyCache(options.output);
 
     // Verificar se existem empresas anteriores
@@ -127,7 +146,27 @@ program
     let empresa: Empresa;
     let outputDir: string;
 
-    if (existingCompanies.length > 0) {
+    if (options.input) {
+      // Modo não-interativo com arquivo de entrada
+      const inputPath = path.resolve(options.input);
+      if (!fs.existsSync(inputPath)) {
+        console.error(`❌ Arquivo de entrada não encontrado: ${inputPath}`);
+        process.exit(1);
+      }
+      try {
+        const fileContent = fs.readFileSync(inputPath, 'utf-8');
+        empresa = JSON.parse(fileContent);
+        // Validação básica
+        if (!empresa.nome || !empresa.cnpj || !empresa.contato?.email) {
+          throw new Error('Campos obrigatórios ausentes no JSON (nome, cnpj, contato.email)');
+        }
+        console.log(`📋 Carregando dados de: ${inputPath}`);
+        outputDir = cache.generateOutputDir(empresa, options.output);
+      } catch (error) {
+        console.error('❌ Erro ao ler arquivo de entrada:', error instanceof Error ? error.message : String(error));
+        process.exit(1);
+      }
+    } else if (existingCompanies.length > 0) {
       console.log('📋 Empresas processadas anteriormente encontradas:\\n');
 
       existingCompanies.forEach((cached, index) => {

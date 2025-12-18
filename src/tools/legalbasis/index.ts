@@ -8,15 +8,14 @@ export class LegalBasisTool {
   constructor(
     private llm: LanguageModelClient,
     private logger: Logger
-  ) {}
+  ) { }
 
   async execute(empresa: Empresa, dataFlows: DataFlow[], outputDir: string): Promise<ToolResult> {
     try {
       const basesLegais = await this.definirBasesLegais(dataFlows);
 
-      const csvPath = path.join(outputDir, 'bases-legais.csv');
-      const csvContent = this.gerarCSV(basesLegais);
-      fs.writeFileSync(csvPath, csvContent);
+      const csvPath = await this.gerarCSV(basesLegais, outputDir);
+      // fs.writeFileSync(csvPath, csvContent); // Removido pois csv-writer já salva
 
       this.logger.log('LEGAL_BASIS_ASSIGNMENT', true, dataFlows, basesLegais);
 
@@ -85,13 +84,21 @@ Responda apenas com o número romano e nome: "V - execução de contrato"
     return justificativas[numero] || 'Base legal definida conforme análise jurídica';
   }
 
-  private gerarCSV(basesLegais: any[]): string {
-    let csv = 'Atividade,Finalidade,Base Legal,Justificativa\\n';
+  private async gerarCSV(basesLegais: any[], outputDir: string): Promise<string> {
+    const csvPath = path.join(outputDir, 'bases-legais.csv');
+    const { createObjectCsvWriter } = await import('csv-writer');
 
-    basesLegais.forEach(base => {
-      csv += `"${base.atividade}","${base.finalidade}","${base.baseLegal}","${base.justificativa}"\\n`;
+    const csvWriter = createObjectCsvWriter({
+      path: csvPath,
+      header: [
+        { id: 'atividade', title: 'Atividade' },
+        { id: 'finalidade', title: 'Finalidade' },
+        { id: 'baseLegal', title: 'Base Legal' },
+        { id: 'justificativa', title: 'Justificativa' }
+      ]
     });
 
-    return csv;
+    await csvWriter.writeRecords(basesLegais);
+    return csvPath;
   }
 }
