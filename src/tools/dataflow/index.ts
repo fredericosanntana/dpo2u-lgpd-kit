@@ -14,8 +14,17 @@ export class DataFlowTool {
 
   async execute(empresa: Empresa, outputDir: string): Promise<ToolResult> {
     try {
-      const atividades = await this.identificarAtividades(empresa);
-      const fluxos = await this.mapearFluxosDados(empresa, atividades);
+      let fluxos: DataFlow[];
+
+      // Check if wizard data is available
+      if (empresa.wizard_data && empresa.wizard_data.inventory.length > 0) {
+        console.log('✓ Usando dados do wizard para inventário');
+        fluxos = this.gerarFluxosDeWizard(empresa);
+      } else {
+        console.log('⚠️ Wizard data não disponível, gerando via LLM');
+        const atividades = await this.identificarAtividades(empresa);
+        fluxos = await this.mapearFluxosDados(empresa, atividades);
+      }
 
       // Gerar CSV
       const csvPath = await this.gerarCSV(fluxos, outputDir);
@@ -39,6 +48,36 @@ export class DataFlowTool {
         error: error instanceof Error ? error.message : String(error)
       };
     }
+  }
+
+  // New method: Generate data flows from wizard data
+  private gerarFluxosDeWizard(empresa: Empresa): DataFlow[] {
+    if (!empresa.wizard_data) return [];
+
+    const { inventory, purposes, storage, third_parties } = empresa.wizard_data;
+    const fluxos: DataFlow[] = [];
+
+    // Group by data item
+    inventory.forEach(item => {
+      const purpose = purposes.find(p => p.dataItemId === item.id);
+      const storageInfo = storage.find(s => s.dataItemId === item.id);
+      const relatedThirdParties = third_parties.filter(tp =>
+        tp.dados_compartilhados.includes(item.id)
+      );
+
+      fluxos.push({
+        atividade: purpose?.finalidade || `Tratamento de ${item.tipo}`,
+        dados: [item.tipo],
+        finalidade: purpose?.finalidade || 'Não especificado',
+        baseLegal: purpose?.baseLegal || 'A definir',
+        retencao: storageInfo?.periodo_retencao || 'A definir',
+        acesso: ['Conforme matriz de acesso interna'],
+        destino: storageInfo?.localizacao || 'Sistema interno',
+        operador: relatedThirdParties.length > 0 ? relatedThirdParties.map(tp => tp.nome).join(', ') : ''
+      });
+    });
+
+    return fluxos;
   }
 
   private async identificarAtividades(empresa: Empresa): Promise<string[]> {
