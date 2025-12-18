@@ -126,13 +126,13 @@ Esta política pode ser alterada a qualquer tempo, com comunicação prévia aos
 
     // Build purposes section
     const finalidadesTexto = purposes.map(p => {
-      const item = inventory.find(i => i.dataItemId === p.dataItemId);
+      const item = inventory.find(i => i.id === p.dataItemId);
       return `- ${item?.tipo || 'Dado'}: ${p.finalidade}\n  Base legal: ${p.baseLegal}\n  Justificativa: ${p.justificativa}`;
     }).join('\n\n');
 
     // Build storage section
     const armazenamentoTexto = storage.map(s => {
-      const item = inventory.find(i => i.dataItemId === s.dataItemId);
+      const item = inventory.find(i => i.id === s.dataItemId);
       return `- ${item?.tipo || 'Dado'}: Armazenado em ${s.localizacao}${s.provedor ? ` (${s.provedor})` : ''}, mantido por ${s.periodo_retencao}`;
     }).join('\n');
 
