@@ -54,7 +54,7 @@ const config: Config = {
   					'300': '#d8b4fe',
   					'400': '#c084fc',
   					'500': '#7C3AED', /* LEANN Enhanced: DPO2U primary purple */
-  					'600': '#7C2D12',
+  					'600': '#6D28D9', /* Fixed: DPO2U purple-hover */
   					'700': '#6B21A8',
   					'800': '#581C87',
   					'900': '#4C1D95'
@@ -159,15 +159,25 @@ const config: Config = {
   			info: '#3b82f6'
   		},
   		fontFamily: {
-  			serif: [
-  				'Playfair Display',
-  				'Times New Roman',
-  				'serif'
+  			display: [
+  				'Outfit',
+  				'system-ui',
+  				'sans-serif'
+  			],
+  			heading: [
+  				'Outfit',
+  				'system-ui',
+  				'sans-serif'
   			],
   			sans: [
   				'Inter',
   				'system-ui',
   				'sans-serif'
+  			],
+  			mono: [
+  				'JetBrains Mono',
+  				'Fira Code',
+  				'monospace'
   			]
   		},
   		spacing: {
