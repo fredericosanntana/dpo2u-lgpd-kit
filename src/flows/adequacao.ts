@@ -18,7 +18,7 @@ export class AdequacaoFlow {
     private llm: LanguageModelClient,
     private logger: Logger,
     private outputDir: string
-  ) {}
+  ) { }
 
   async execute(empresa: Empresa): Promise<void> {
     console.log('🔄 Iniciando fluxo de adequação LGPD...\\n');
@@ -63,6 +63,10 @@ export class AdequacaoFlow {
     const reportTool = new ReportTool(this.llm, this.logger);
     await reportTool.execute(empresa, this.outputDir);
 
+    // Etapa 9: Compliance como Protocolo (Schema v1)
+    console.log('🤖 9/9 - Gerando Protocolo de Compliance (policy.json)...');
+    await this.generateProtocolSchema(empresa, maturityResult.data, dataFlowResult.data);
+
     // Etapa 9: Empacotamento Final
     console.log('📦 Criando pacote final...');
     await this.createFinalPackage();
@@ -81,7 +85,7 @@ export class AdequacaoFlow {
         resolve();
       });
 
-      archive.on('error', (err) => {
+      archive.on('error', (err: any) => {
         reject(err);
       });
 
@@ -100,5 +104,44 @@ export class AdequacaoFlow {
 
       archive.finalize();
     });
+  }
+
+  private async generateProtocolSchema(empresa: Empresa, maturityData: any, dataFlowData: any): Promise<void> {
+    try {
+      // Extrair categorias de dados
+      const dataCategories = Array.from(new Set(
+        dataFlowData.flatMap((flow: any) => flow.dados)
+      )) as string[];
+
+      // Construir schema LGPD v1
+      const policy_json = {
+        schema_version: 'dpo2u/lgpd/v1',
+        company_id: empresa.cnpj,
+        generated_at: new Date().toISOString(),
+        policy: {
+          retention_days: 1825, // Fallback genérico para guarda fiscal (5 anos) ou adaptar da LLM
+          data_categories: dataCategories,
+          consent_mechanism: "opt-in-explicito",
+          dpo_contact: empresa.contato.email,
+          last_review: new Date().toISOString().split('T')[0]
+        },
+        documents: [
+          { type: 'maturidade', file: 'maturidade.pdf', cid: null },
+          { type: 'inventario', file: 'inventario.csv', cid: null },
+          { type: 'bases_legais', file: 'bases-legais.csv', cid: null },
+          { type: 'dpia', file: 'dpia.pdf', cid: null },
+          { type: 'privacy_policy', file: 'politica-privacidade.txt', cid: null },
+          { type: 'dpa', file: 'contrato-dpa.txt', cid: null },
+          { type: 'incident_plan', file: 'plano-incidente.txt', cid: null },
+          { type: 'dpo_report', file: 'relatorio-dpo.pdf', cid: null }
+        ]
+      };
+
+      const jsonPath = path.join(this.outputDir, 'policy.json');
+      fs.writeFileSync(jsonPath, JSON.stringify(policy_json, null, 2));
+      console.log(`🤖 Schema policy.json gerado referenciando todos os arquivos locais.`);
+    } catch (error) {
+      console.error(`Erro ao gerar Protocol Schema: ${error}`);
+    }
   }
 }

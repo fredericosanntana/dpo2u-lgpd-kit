@@ -41,6 +41,7 @@ O LGPD Kit emite dois níveis de conformidade: **estruturas de dados para IA (Pr
 | 📝 **Contratos DPA** | `contrato-dpa.txt` | Template para operadores |
 | 🚨 **Plano de Incidentes** | `plano-incidente.txt` | Resposta a vazamentos |
 | 📋 **Relatório DPO** | `relatorio-dpo.pdf` | Evidências e próximos passos |
+| 🤖 **Protocolo de Compliance** | `policy.json` | Schema v1 com referências aos arquivos acima |
 
 **📦 Pacote CLI Final:** `pacote-final.zip` com todos os documentos + log de auditoria
 
@@ -159,10 +160,11 @@ $ npm run adequacao
 📝 6/8 - Gerando contratos DPA...
 🚨 7/8 - Criando plano de resposta a incidentes...
 📋 8/8 - Gerando relatório final...
+🤖 9/9 - Gerando Protocolo de Compliance (policy.json)...
 📦 Criando pacote final...
 
 🎉 Adequação LGPD Concluída!
-✅ 8/8 etapas executadas com sucesso
+✅ 9/9 etapas executadas com sucesso
 
 📋 Log de auditoria salvo em: ./compliance-output/techcorp-solucoes-2025-01-15/log-auditoria.json
 📁 Todos os documentos estão em: ./compliance-output/techcorp-solucoes-2025-01-15
