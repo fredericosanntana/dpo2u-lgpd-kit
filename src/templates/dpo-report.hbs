@@ -1,0 +1,362 @@
+# RELATÓRIO EXECUTIVO DPO - {{companyName}}
+
+**Período:** {{period}}
+**Data de Geração:** {{generatedDate}}
+**Responsável:** {{dpoName}}
+**Versão:** {{version}}
+
+---
+
+## RESUMO EXECUTIVO
+
+### Visão Geral
+
+Este relatório apresenta o status atual de conformidade com a LGPD/GDPR na **{{companyName}}}}, identificando progressos, gaps e recomendações estratégicas para o próximo período.
+
+### Score de Conformidade
+
+| Métrica | Valor | Status |
+|---------|-------|--------|
+| **Score Geral** | {{overallScore}}/100 | {{getScoreStatus overallScore}} |
+| **Governança** | {{governanceScore}}/20 | {{getScoreStatus governanceScore}} |
+| **Direitos dos Titulares** | {{rightsScore}}/20 | {{getScoreStatus rightsScore}} |
+| **Segurança** | {{securityScore}}/20 | {{getScoreStatus securityScore}} |
+| **Transferência Internacional** | {{internationalScore}}/20 | {{getScoreStatus internationalScore}} |
+| **Monitoramento** | {{monitoringScore}}/20 | {{getScoreStatus monitoringScore}} |
+
+**Nível de Maturidade:** {{maturityLevel}}
+
+---
+
+## DESTAQUES DO PERÍODO
+
+{{#each highlights}}
+### {{@index}}. {{this.title}}
+
+{{this.description}}
+
+**Impacto:** {{this.impact}}
+
+**Status:** {{this.status}}
+{{/each}}
+
+---
+
+## MÉTRICAS CHAVE
+
+### Solicitações de Titulares
+
+| Métrica | Valor | Variação |
+|---------|-------|----------|
+| **Solicitações Recebidas** | {{metrics.subjectRequestsReceived}} | {{metrics.subjectRequestsChange}} |
+| **Solicitações Respondidas** | {{metrics.subjectRequestsResponded}} | {{metrics.subjectRequestsResponseRate}}% |
+| **Dentro do Prazo Legal (15 dias)** | {{metrics.withinLegalDeadline}} | {{metrics.timelinessRate}}% |
+| **Média de Tempo de Resposta** | {{metrics.averageResponseTime}} | {{metrics.responseTimeChange}} |
+
+**Breakdown por Tipo:**
+
+{{#each metrics.requestBreakdown}}
+- **{{this.type}}:** {{this.count}} solicitações ({{this.percentage}}%)
+{{/each}}
+
+### Incidentes e Violações
+
+| Métrica | Valor | Status |
+|---------|-------|--------|
+| **Incidentes Relatados** | {{metrics.incidentsReported}} | {{metrics.incidentStatus}} |
+| **Violações Confirmadas** | {{metrics.incidentsConfirmed}} | {{metrics.violationStatus}} |
+| **Notificações à ANPD** | {{metrics.anpdNotifications}} | Obrigatório se sim |
+| **Titulares Notificados** | {{metrics.subjectNotifications}} | {{metrics.notificationStatus}} |
+
+{{#if incidentsList}}
+**Detalhamento dos Incidentes:**
+
+{{#each incidentsList}}
+#### Incidente {{@index}} - {{this.date}}
+- **Tipo:** {{this.type}}
+- **Severidade:** {{this.severity}}
+- **Dados Afetados:** {{this.dataTypes}}
+- **Titulares Impactados:** {{this.subjectsAffected}}
+- **Medidas Adotadas:** {{this.actions}}
+- **Status Atual:** {{this.status}}
+{{/each}}
+{{/if}}
+
+### Treinamento e Conscientização
+
+| Métrica | Valor | Meta |
+|---------|-------|------|
+| **Sessões de Treinamento** | {{metrics.trainingSessions}} | {{metrics.trainingGoal}} |
+| **Funcionários Treinados** | {{metrics.employeesTrained}} | {{metrics.employeeTotal}} |
+| **Taxa de Cobertura** | {{metrics.trainingCoverage}}% | >80% |
+| **Frequência** | {{metrics.trainingFrequency}} | Trimestral |
+
+{{#if trainingTopics}}
+**Títulos dos Treinamentos:**
+
+{{#each trainingTopics}}
+- {{this.title}} ({{this.date}}) - {{this.attendees}} participantes
+{{/each}}
+{{/if}}
+
+### Auditorias e Avaliações
+
+| Atividade | Status | Observações |
+|-----------|--------|-------------|
+{{#each audits}}
+| {{this.name}} | {{this.status}} | {{this.observations}} |
+{{/each}}
+
+---
+
+## STATUS POR CATEGORIA
+
+### 1. Governança
+
+**Score:** {{governanceScore}}/20 ({{governancePercentage}}%)
+
+{{#each governance.findings}}
+- {{this}}
+{{/each}}
+
+**Status:** {{governance.status}}
+
+### 2. Direitos dos Titulares
+
+**Score:** {{rightsScore}}/20 ({{rightsPercentage}}%)
+
+{{#each rights.findings}}
+- {{this}}
+{{/each}}
+
+**Status:** {{rights.status}}
+
+### 3. Segurança da Informação
+
+**Score:** {{securityScore}}/20 ({{securityPercentage}}%)
+
+{{#each security.findings}}
+- {{this}}
+{{/each}}
+
+**Status:** {{security.status}}
+
+### 4. Transferência Internacional
+
+**Score:** {{internationalScore}}/20 ({{internationalPercentage}}%)
+
+{{#each international.findings}}
+- {{this}}
+{{/each}}
+
+**Status:** {{international.status}}
+
+### 5. Monitoramento e Auditoria
+
+**Score:** {{monitoringScore}}/20 ({{monitoringPercentage}}%)
+
+{{#each monitoring.findings}}
+- {{this}}
+{{/each}}
+
+**Status:** {{monitoring.status}}
+
+---
+
+## GAPS IDENTIFICADOS
+
+{{#each gaps}}
+### {{this.category}} - {{this.severity}}
+
+**Gap:** {{this.description}}
+
+**Impacto:** {{this.impact}}
+
+**Prioridade:** {{this.priority}}
+{{/each}}
+
+---
+
+## RECOMENDAÇÕES E AÇÕES
+
+### Recomendações Estratégicas
+
+{{#each strategicRecommendations}}
+{{@index}}. **{{this.title}}** (Prioridade: {{this.priority}})
+   - **O Que Fazer:** {{this.action}}
+   - **Responsável:** {{this.owner}}
+   - **Prazo:** {{this.deadline}}
+   - **Investimento Estimado:** {{this.investment}}
+   - **Impacto Esperado:** {{this.expectedImpact}}
+
+{{/each}}
+
+### Ações Imediatas (Próximos 30 dias)
+
+{{#each immediateActions}}
+- [ ] {{this}} - Prazo: {{this.timeline}}
+{{/each}}
+
+### Ações de Médio Prazo (Próximos 90 dias)
+
+{{#each mediumTermActions}}
+- [ ] {{this}} - Prazo: {{this.timeline}}
+{{/each}}
+
+### Ações de Longo Prazo (Próximos 6-12 meses)
+
+{{#each longTermActions}}
+- [ ] {{this}} - Prazo: {{this.timeline}}
+{{/each}}
+
+---
+
+## ROADMAP DE MELHORIA
+
+### Fase 1 - Fundação (Meses 1-3)
+
+**Objetivo:** Fortalecer base de conformidade
+
+{{#each roadmap.phase1}}
+- **{{this.action}}** - {{this.estimatedCost}}
+{{/each}}
+
+**Investimento Total:** {{roadmap.phase1Investment}}
+
+### Fase 2 - Consolidação (Meses 4-6)
+
+**Objetivo:** Melhorar processos e controles
+
+{{#each roadmap.phase2}}
+- **{{this.action}}** - {{this.estimatedCost}}
+{{/each}}
+
+**Investimento Total:** {{roadmap.phase2Investment}}
+
+### Fase 3 - Excelência (Meses 7-12)
+
+**Objetivo:** Alinhar com melhores práticas internacionais
+
+{{#each roadmap.phase3}}
+- **{{this.action}}** - {{this.estimatedCost}}
+{{/each}}
+
+**Investimento Total:** {{roadmap.phase3Investment}}
+
+**Investimento Total do Ano:** {{roadmap.totalInvestment}}
+
+---
+
+## ANÁLISE DE RISCOS RESIDUAIS
+
+### Riscos Altos (Ação Imediata Necessária)
+
+{{#each highRisks}}
+- **{{this.title}}:** {{this.description}}
+  - *Probabilidade:* {{this.probability}}
+  - *Impacto:* {{this.impact}}
+  - *Mitigação:* {{this.mitigation}}
+{{/each}}
+
+### Riscos Médios (Monitorar e Reduzir)
+
+{{#each mediumRisks}}
+- **{{this.title}}:** {{this.description}}
+  - *Probabilidade:* {{this.probability}}
+  - *Impacto:* {{this.impact}}
+  - *Mitigação:* {{this.mitigation}}
+{{/each}}
+
+### Riscos Baixos (Aceitar)
+
+{{#each lowRisks}}
+- **{{this.title}}:** {{this.description}}
+{{/each}}
+
+---
+
+## PROJEÇÕES PARA O PRÓXIMO PERÍODO
+
+### Metas e KPIs
+
+| KPI | Valor Atual | Meta Próximo Período | Gap |
+|-----|-------------|----------------------|-----|
+{{#each nextPeriodKPIs}}
+| {{this.name}} | {{this.current}} | {{this.target}} | {{this.gap}} |
+{{/each}}
+
+### Iniciativas Planejadas
+
+{{#each plannedInitiatives}}
+- **{{this.name}}** ({{this.quarter}})
+  - Orçamento: {{this.budget}}
+  - Responsável: {{this.owner}}
+  - Resultado Esperado: {{this.expectedOutcome}}
+{{/each}}
+
+---
+
+## CONCLUSÃO E PRÓXIMOS PASSOS
+
+### Resumo do Período
+
+O período {{period}} foi marcado por:
+
+{{#each summaryPoints}}
+- {{this}}
+{{/each}}
+
+### Recomendação Final
+
+**Status:** {{finalRecommendation.status}}
+
+**Mensagem:**
+
+> {{finalRecommendation.message}}
+
+### Próximos Passos Imediatos
+
+1. **Reunião com Diretoria:** {{nextSteps.executiveMeeting}}
+2. **Aprovação do Orçamento:** {{nextSteps.budgetApproval}}
+3. **Início das Ações Prioritárias:** {{nextSteps.priorityActionsStart}}
+4. **Próximo Relatório:** {{nextSteps.nextReportDate}}
+
+---
+
+## APROVAÇÃO
+
+| Campo | Informação |
+|-------|------------|
+| **Elaborado por:** | {{dpoName}} - Encarregado (DPO) |
+| **Cargo:** | {{dpoRole}} |
+| **Data:** | {{generatedDate}} |
+| **Aprovado por:** | {{approverName}} |
+| **Cargo do Aprovador:** | {{approverRole}} |
+| **Data de Aprovação:** | {{approvalDate}} |
+| **Assinatura:** | _____________________ |
+
+---
+
+## ANEXOS
+
+### Anexo I - Detalhamento de Métricas
+[Inserir planilhas detalhadas]
+
+### Anexo II - Evidências de Auditoria
+[Inserir checklists e relatórios]
+
+### Anexo III - Registro de Treinamentos
+[Inserir lista de participantes e certificados]
+
+### Anexo IV - Análise de Riscos Detalhada
+[Inserir matriz de riscos completa]
+
+---
+
+**DOCUMENTO GERADO AUTOMATICAMENTE POR DPO2U COMPLIANCE-AS-A-SERVICE**
+
+**Data de Geração:** {{generatedDate}}
+**Período de Validade:** {{period}}
+**Próxima Atualização:** {{nextReportDate}}
+
+Para dúvidas ou informações adicionais, entre em contato com o Encarregado (DPO).

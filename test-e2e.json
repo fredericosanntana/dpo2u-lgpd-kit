@@ -1,0 +1,12 @@
+{
+    "nome": "Empresa Teste E2E",
+    "cnpj": "12.345.678/0001-90",
+    "setor": "Tecnologia/Software",
+    "colaboradores": 30,
+    "coletaDados": true,
+    "possuiOperadores": true,
+    "contato": {
+        "responsavel": "DPO",
+        "email": "dpo@teste.com"
+    }
+}

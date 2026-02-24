@@ -1,0 +1,248 @@
+# RELATÓRIO DE IMPACTO À PROTEÇÃO DE DADOS (DPIA/RIA)
+
+**Conforme Arts. 38-40 da Lei 13.709/2018 (LGPD) e Art. 35 do GDPR**
+
+---
+
+## 1. IDENTIFICAÇÃO
+
+### 1.1 Dados Gerais
+
+| Campo | Informação |
+|-------|------------|
+| **Empresa Responsável** | {{company}} |
+| **CNPJ** | {{#if cnpj}}{{cnpj}}{{else}}Não informado{{/if}} |
+| **Data de Elaboração** | {{generatedDate}} |
+| **Versão** | 1.0 |
+| **Responsável pela Elaboração** | DPO2U Compliance-as-a-Service |
+
+### 1.2 Descrição da Atividade de Tratamento
+
+**Atividade:** {{processingActivity}}
+
+**Finalidade:** {{purpose}}
+
+### 1.3 Categorias de Dados Pessoais
+
+{{#each dataTypes}}
+- {{this}}
+{{/each}}
+
+### 1.4 Titulares dos Dados
+
+{{#each dataSubjects}}
+- {{this}}
+{{/each}}
+
+---
+
+## 2. BASE LEGAL
+
+**Base Legal Principal:** {{legalBasis}}
+
+{{#if legalBasisDescription}}
+{{legalBasisDescription}}
+{{/if}}
+
+**Fundamentação Jurídica:**
+- Lei 13.709/2018 (LGPD): Artigos relacionados à base legal citada
+- GDPR (quando aplicável): Artigos correspondentes
+
+---
+
+## 3. ANÁLISE DE NECESSIDADE E PROPORCIONALIDADE
+
+### 3.1 Necessidade do Tratamento
+
+{{necessityAnalysis}}
+
+### 3.2 Proporcionalidade
+
+{{proportionalityAnalysis}}
+
+### 3.3 Medidas de Minimização de Dados
+
+{{minimizationMeasures}}
+
+---
+
+## 4. AVALIAÇÃO DE RISCOS
+
+### 4.1 Metodologia de Avaliação
+
+Riscos avaliados conforme Guide DPO da ANPD e Guidelines do EDPB, considerando:
+- **Probabilidade:** Baixa, Média, Alta
+- **Impacto:** Baixo, Médio, Alto
+- **Nível de Risco:** Baixo, Médio, Alto (matriz de probabilidade × impacto)
+
+### 4.2 Riscos Identificados
+
+{{#each risks}}
+#### {{@index}}. {{title}}
+
+**Descrição:** {{description}}
+
+**Probabilidade:** {{likelihood}}
+**Impacto:** {{impact}}
+**Nível de Risco:** {{riskLevel}}
+
+**Medidas de Mitigação:**
+{{#each mitigation}}
+- {{this}}
+{{/each}}
+
+**Risco Residual:** {{residualRisk}}
+
+---
+{{/each}}
+
+### 4.3 Nível de Risco Geral
+
+**Nível de Risco da Atividade:** {{overallRiskLevel}}
+
+{{#if overallRiskJustification}}
+**Justificativa:** {{overallRiskJustification}}
+{{/if}}
+
+---
+
+## 5. MEDIDAS DE SEGURANÇA TÉCNICAS E ADMINISTRATIVAS
+
+### 5.1 Medidas Técnicas
+
+{{#each technicalMeasures}}
+- **{{title}}:** {{description}}
+{{/each}}
+
+### 5.2 Medidas Administrativas
+
+{{#each administrativeMeasures}}
+- **{{title}}:** {{description}}
+{{/each}}
+
+### 5.3 Medidas Organizacionais
+
+{{#each organizationalMeasures}}
+- **{{title}}:** {{description}}
+{{/each}}
+
+---
+
+## 6. TRANSFERÊNCIA INTERNACIONAL DE DADOS
+
+{{#if internationalTransfer}}
+**Atenção:** Esta atividade envolve transferência internacional de dados.
+
+### 6.1 Países de Destino
+
+{{internationalTransferCountries}}
+
+### 6.2 Base Legal para Transferência
+
+{{internationalTransferBasis}}
+
+### 6.3 Medidas de Segurança Adicionais
+
+{{internationalTransferMeasures}}
+{{else}}
+Esta atividade **NÃO** envolve transferência internacional de dados pessoais.
+{{/if}}
+
+---
+
+## 7. DECISÃO AUTOMATIZADA
+
+{{#if automatedDecision}}
+**Atenção:** Esta atividade envolve decisões automatizadas (Art. 20 da LGPD).
+
+### 7.1 Descrição da Decisão Automatizada
+
+{{automatedDecisionDescription}}
+
+### 7.2 Direitos do Titular
+
+{{automatedDecisionRights}}
+{{else}}
+Esta atividade **NÃO** envolve decisões automatizadas que produzam efeitos jurídicos ou significativos.
+{{/if}}
+
+---
+
+## 8. PLANO DE AÇÃO E MONITORAMENTO
+
+### 8.1 Ações Imediatas
+
+{{#each immediateActions}}
+- [ ] {{this}}
+{{/each}}
+
+### 8.2 Ações de Médio Prazo
+
+{{#each mediumTermActions}}
+- [ ] {{this}}
+{{/each}}
+
+### 8.3 Monitoramento e Revisão
+
+{{monitoringPlan}}
+
+**Próxima Revisão:** {{nextReviewDate}}
+
+---
+
+## 9. REGISTRO DE TOMADA DE DECISÃO
+
+**Decisão:** A atividade de tratamento descrita neste DPIA **PODE SER EXECUTADA**, sujeita à implementação das medidas de mitigação e segurança descritas.
+
+**Justificativa da Decisão:** {{decisionJustification}}
+
+**Aprovação:**
+
+| Campo | Informação |
+|-------|------------|
+| **Responsável** | {{approverName}} |
+| **Cargo** | {{approverRole}} |
+| **Data** | {{approvalDate}} |
+| **Assinatura** | _____________________ |
+
+---
+
+## 10. REFERÊNCIAS
+
+### 10.1 Normativas
+
+- Lei 13.709/2018 - Lei Geral de Proteção de Dados Pessoais (LGPD)
+- Regulamento (UE) 2016/679 - GDPR (quando aplicável)
+- Resolução CD/ANPD nº X/202X - Guia Orientativo para DPIA
+{{#if additionalReferences}}
+{{#each additionalReferences}}
+- {{this}}
+{{/each}}
+{{/if}}
+
+### 10.2 Documentos Consultados
+
+{{#each sources}}
+- {{metadata.file}} (relevância: {{score}})
+{{/each}}
+
+---
+
+## ANEXOS
+
+### Anexo I - Matriz de Riscos Detalhada
+[Inserir matriz completa]
+
+### Anexo II - Fluxograma do Tratamento
+[Inserir diagrama]
+
+### Anexo III - Políticas e Procedimentos Relacionados
+[Listar documentos]
+
+---
+
+**DOCUMENTO GERADO AUTOMATICAMENTE POR DPO2U COMPLIANCE-AS-A-SERVICE**
+**Data de Geração:** {{generatedDate}}
+**Validade:** 1 ano a partir da data de geração
+
+Para dúvidas ou informações adicionais, consulte o Encarregado (DPO) da organização.

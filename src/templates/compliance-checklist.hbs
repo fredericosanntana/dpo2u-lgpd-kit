@@ -1,0 +1,388 @@
+# CHECKLIST DE CONFORMIDADE LGPD/GDPR
+
+**Empresa:** {{companyName}}
+**Data de Elaboração:** {{generatedDate}}
+**Framework:** {{framework}}
+**Escopo:** {{auditScope}}
+**Versão:** 1.0
+
+---
+
+## RESUMO DA VERIFICAÇÃO
+
+| Métrica | Valor |
+|---------|-------|
+| **Itens Verificados** | {{totalItems}} |
+| **Itens Conformes** | {{compliantItems}} ({{compliantPercentage}}%) |
+| **Itens Parcialmente Conformes** | {{partialItems}} ({{partialPercentage}}%) |
+| **Itens Não Conformes** | {{nonCompliantItems}} ({{nonCompliantPercentage}}%) |
+| **Score Geral** | {{overallScore}}/100 |
+| **Status** | {{overallStatus}} |
+
+---
+
+## PONTUAÇÃO POR CATEGORIA
+
+{{#each categoryScores}}
+### {{this.category}}: {{this.score}}/{{this.maxScore}} ({{this.percentage}}%)
+
+**Status:** {{this.status}}
+
+**Progresso:**
+`{{this.progressBar}}`
+
+{{/each}}
+
+---
+
+## CHECKLIST DETALHADO
+
+{{#each checklistSections}}
+
+## SECÇÃO {{@index}}: {{this.title}}
+
+**Descrição:** {{this.description}}
+
+**Peso:** {{this.weight}}%
+
+---
+
+{{#each this.items}}
+### {{this.number}}. {{this.title}}
+
+**Requisito:** {{this.requirement}}
+
+**Artigo(s) LGPD:** {{this.articles}}
+
+**Status:** {{this.status}}
+
+**Evidências:**
+{{#if this.evidences}}
+{{#each this.evidences}}
+- {{this}}
+{{/each}}
+{{else}}
+_Nenhuma evidência fornecida_
+{{/if}}
+
+{{#if this.gap}}
+**Gap Identificado:**
+{{this.gap}}
+
+**Recomendação:**
+{{this.recommendation}}
+
+**Prioridade:** {{this.priority}}
+
+**Prazo Sugerido:** {{this.timeline}}
+{{/if}}
+
+---
+
+{{/each}}
+{{/each}}
+
+---
+
+## MATRIZ DE RISCOS
+
+### Itens de Alto Risco (Ação Imediata)
+
+{{#each highRiskItems}}
+#### {{this.code}} - {{this.title}}
+
+- **Risco:** {{this.risk}}
+- **Impacto Potencial:** {{this.impact}}
+- **Medida Mitigadora:** {{this.mitigation}}
+- **Prazo:** {{this.deadline}}
+
+{{/each}}
+
+### Itens de Risco Médio (Melhorar em 90 dias)
+
+{{#each mediumRiskItems}}
+#### {{this.code}} - {{this.title}}
+
+- **Risco:** {{this.risk}}
+- **Impacto Potencial:** {{this.impact}}
+- **Medida Mitigadora:** {{this.mitigation}}
+- **Prazo:** {{this.deadline}}
+
+{{/each}}
+
+---
+
+## GAP ANALYSIS
+
+### Gaps Críticos (Atraso Significativo)
+
+{{#each criticalGaps}}
+**{{this.category}}** - {{this.requirement}}
+
+- **Situação Atual:** {{this.currentState}}
+- **Situação Desejada:** {{this.desiredState}}
+- **Gap:** {{this.gap}}
+- **Prioridade:** ALTA
+- **Investimento Estimado:** {{this.estimatedCost}}
+- **Responsável:** {{this.owner}}
+
+{{/each}}
+
+### Gaps Moderados (Melhorias Necessárias)
+
+{{#each moderateGaps}}
+**{{this.category}}** - {{this.requirement}}
+
+- **Situação Atual:** {{this.currentState}}
+- **Situação Desejada:** {{this.desiredState}}
+- **Gap:** {{this.gap}}
+- **Prioridade:** MÉDIA
+- **Responsável:** {{this.owner}}
+
+{{/each}}
+
+---
+
+## PLANO DE AÇÃO PRIORITÁRIO
+
+### Ações Imediatas (30 dias)
+
+{{#each immediateActions}}
+{{@index}}. **{{this.action}}** ({{this.category}})
+   - **Responsável:** {{this.owner}}
+   - **Prazo:** {{this.deadline}}
+   - **Investimento:** {{this.investment}}
+   - **Impacto:** {{this.impact}}
+
+{{/each}}
+
+### Ações de Curto Prazo (90 dias)
+
+{{#each shortTermActions}}
+{{@index}}. **{{this.action}}** ({{this.category}})
+   - **Responsável:** {{this.owner}}
+   - **Prazo:** {{this.deadline}}
+   - **Investimento:** {{this.investment}}
+
+{{/each}}
+
+### Ações de Médio Prazo (6 meses)
+
+{{#each mediumTermActions}}
+{{@index}}. **{{this.action}}** ({{this.category}})
+   - **Responsável:** {{this.owner}}
+   - **Prazo:** {{this.deadline}}
+   - **Investimento:** {{this.investment}}
+
+{{/each}}
+
+---
+
+## ANÁLISE POR ARTIGO LGPD
+
+### Artigo 5º - Princípios
+
+{{#each lgpdPrinciples}}
+- **{{this.principle}}:** {{this.status}} - {{this.description}}
+{{/each}}
+
+**Score Princípios:** {{principlesScore}}/{{principlesMax}}
+
+### Artigo 6º - Bases Legais
+
+{{#each legalBasesChecklist}}
+- **{{this.basis}}:** {{this.status}} - {{this.description}}
+{{/each}}
+
+**Score Bases Legais:** {{legalBasesScore}}/{{legalBasesMax}}
+
+### Artigo 7º - Hipóteses de Tratamento
+
+{{#each treatmentHypotheses}}
+- **{{this.hypothesis}}:** {{this.status}} - {{this.description}}
+{{/each}}
+
+**Score Hipóteses:** {{hypothesesScore}}/{{hypothesesMax}}
+
+### Artigo 9º - Tratamento de Dados Sensíveis
+
+{{#each sensitiveDataChecklist}}
+- **{{this.item}}:** {{this.status}} - {{this.description}}
+{{/each}}
+
+**Score Dados Sensíveis:** {{sensitiveDataScore}}/{{sensitiveDataMax}}
+
+### Artigo 18 - Direitos do Titular
+
+{{#each rightsChecklist}}
+- **{{this.right}}:** {{this.status}} - {{this.description}}
+{{/each}}
+
+**Score Direitos:** {{rightsScore}}/{{rightsMax}}
+
+### Artigo 46 - Transferência Internacional
+
+{{#each internationalTransferChecklist}}
+- **{{this.item}}:** {{this.status}} - {{this.description}}
+{{/each}}
+
+**Score Transferência:** {{internationalScore}}/{{internationalMax}}
+
+---
+
+## MAPA DE CONFORMIDADE
+
+### Por Domínio
+
+| Domínio | Score | Status | Prioridade |
+|---------|-------|--------|------------|
+{{#each domainMap}}
+| {{this.domain}} | {{this.score}}% | {{this.status}} | {{this.priority}} |
+{{/each}}
+
+### Por Processo
+
+| Processo | Score | Status | Observações |
+|----------|-------|--------|-------------|
+{{#each processMap}}
+| {{this.process}} | {{this.score}}% | {{this.status}} | {{this.notes}} |
+{{/each}}
+
+---
+
+## RECOMENDAÇÕES ESTRATÉGICAS
+
+### Governança
+
+{{#each governanceRecommendations}}
+{{@index}}. **{{this.title}}**
+   - **O Que Fazer:** {{this.action}}
+   - **Por Que:** {{this.rationale}}
+   - **Benefício Esperado:** {{this.benefit}}
+   - **Investimento:** {{this.investment}}
+
+{{/each}}
+
+### Segurança da Informação
+
+{{#each securityRecommendations}}
+{{@index}}. **{{this.title}}**
+   - **O Que Fazer:** {{this.action}}
+   - **Por Que:** {{this.rationale}}
+   - **Benefício Esperado:** {{this.benefit}}
+   - **Investimento:** {{this.investment}}
+
+{{/each}}
+
+### Processos e Controles
+
+{{#each processRecommendations}}
+{{@index}}. **{{this.title}}**
+   - **O Que Fazer:** {{this.action}}
+   - **Por Que:** {{this.rationale}}
+   - **Benefício Esperado:** {{this.benefit}}
+   - **Investimento:** {{this.investment}}
+
+{{/each}}
+
+---
+
+## PRÓXIMOS PASSOS
+
+### Revisão Gerencial
+
+**Data Sugerida:** {{managementReviewDate}}
+
+**Participantes:**
+- Diretoria Executiva
+- Encarregado (DPO)
+- Jurídico
+- TI/Segurança
+- RH
+
+**Pauta:**
+1. Apresentação dos resultados
+2. Priorização das ações corretivas
+3. Aprovação do orçamento
+4. Definição de responsabilidades
+
+### Cronograma de Implementação
+
+**Fase 1 (Meses 1-2):** Ações Críticas
+{{#each phase1Timeline}}
+- {{this}} ({{this.deadline}})
+{{/each}}
+
+**Fase 2 (Meses 3-4):** Melhorias de Processo
+{{#each phase2Timeline}}
+- {{this}} ({{this.deadline}})
+{{/each}}
+
+**Fase 3 (Meses 5-6):** Consolidação
+{{#each phase3Timeline}}
+- {{this}} ({{this.deadline}})
+{{/each}}
+
+### Próxima Auditoria
+
+**Data Prevista:** {{nextAuditDate}}
+
+**Escopo Sugerido:**
+- Verificação de implementação das recomendações
+- Validação de evidências
+- Reavaliação do score de conformidade
+
+---
+
+## CERTIFICADO DE VERIFICAÇÃO
+
+| Campo | Informação |
+|-------|------------|
+| **Empresa Verificada:** | {{companyName}} |
+| **CNPJ:** | {{#if cnpj}}{{cnpj}}{{else}}Não informado{{/if}} |
+| **Data da Verificação:** | {{generatedDate}} |
+| **Auditor Responsável:** | {{auditorName}} |
+| **Cargo:** | {{auditorRole}} |
+| **Qualificação:** | {{auditorCredentials}} |
+| **Score Final:** | {{overallScore}}/100 |
+| **Status Final:** | {{overallStatus}} |
+
+**Declaração:**
+Certifico que a verificação de conformidade foi conduzida conforme as melhores práticas de mercado e normativas aplicáveis (LGPD/GDPR), sendo este relatório representativo do status de conformidade na data de sua elaboração.
+
+**Assinatura:**
+_________________________
+**{{auditorName}}**
+
+---
+
+## ANEXOS
+
+### Anexo I - Evidências Coletadas
+[Listar documentos, políticas, procedimentos]
+
+### Anexo II - Matriz de Riscos Completa
+[Inserir análise detalhada de riscos]
+
+### Anexo III - Plano de Implementação Detalhado
+[Inserir cronograma com responsabilidades]
+
+### Anexo IV - Legislação Aplicável
+- Lei 13.709/2018 - LGPD
+- Regulamento (UE) 2016/679 - GDPR
+- Resoluções CD/ANPD
+{{#if additionalReferences}}
+{{#each additionalReferences}}
+- {{this}}
+{{/each}}
+{{/if}}
+
+---
+
+**DOCUMENTO GERADO AUTOMATICAMENTE POR DPO2U COMPLIANCE-AS-A-SERVICE**
+
+**Data de Geração:** {{generatedDate}}
+**Validade:** 6 meses a partir da data de geração
+**Próxima Revisão:** {{nextReviewDate}}
+
+Para dúvidas ou informações adicionais, consulte o Encarregado (DPO) da organização.
