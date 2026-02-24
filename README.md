@@ -1,28 +1,36 @@
-# 🚀 DPO2U LGPD Kit - Conformidade LGPD em 1 Dia
+# 🚀 DPO2U LGPD Kit
 
-> **LGPD Local Compliance Kit** - Conquiste conformidade documental mínima com a LGPD executando um assistente local, 100% offline, sem enviar dados para nuvem.
+> **LGPD Local Compliance Kit & API** - Conquiste conformidade documental mínima com a LGPD executando um assistente local, 100% offline, ou integre a geração de políticas estruturadas ao ecossistema Web3 DPO2U.
 
 ## ✨ O que é o DPO2U LGPD Kit?
 
-Sistema open-source que permite que **qualquer empresa brasileira** obtenha conformidade documental mínima com a LGPD em **1 dia**, executando um fluxo guiado que gera automaticamente todos os documentos essenciais.
+Sistema open-source de **Compliance como Protocolo** com arquitetura híbrida:
+
+1. **Modo CLI (B2C/PMEs)**: Permite que qualquer empresa obtenha conformidade documental executando um fluxo guiado que gera 8 documentos essenciais 100% localmente em apenas 1 dia.
+2. **Modo Motor de Protocolo (B2B)**: Gera estruturas de dados verificáveis (`policy.json` schema `dpo2u/lgpd/v1`) prontas para integração on-chain via Midnight Network e armazenamento em IPFS via Lighthouse. Destinado ao consumo autônomo de Agentes de IA via servidor MCP.
 
 ### 🎯 **Problema que Resolve**
 
-- ❌ Adequação LGPD é **cara** (consultorias R$ 50k+)
-- ❌ É **lenta** (3-6 meses de projeto)
-- ❌ **Inacessível** para micro e pequenas empresas
-- ❌ Depende de **serviços cloud** que coletam dados sensíveis
+- ❌ Adequação LGPD é **cara** e **lenta** (consultorias tradicionais R$ 50k+)
+- ❌ Documentações são passivas, de papel, e não auditáveis por máquinas/IAs
+- ❌ Depende de **serviços cloud** que coletam dados sensíveis da própria empresa
 
 ### ✅ **Nossa Solução**
 
-- ✅ **100% Local** - Dados nunca saem da sua máquina
+- ✅ **100% Local (CLI)** - Dados sensíveis nunca saem da sua máquina
+- ✅ **Compliance como Protocolo (Motor B2B)** - Geração de attestation baseada no Schema `v1`
 - ✅ **Zero Custo** - Completamente gratuito e open-source
-- ✅ **1 Dia** - Conformidade em algumas horas
-- ✅ **Completo** - Todos os 8 documentos obrigatórios
-- ✅ **Auditável** - Log completo para evidências
+- ✅ **Completo** - PDFs gerados via CLI e JSON schemas gerados via API
 
-## 📦 Documentos Gerados Automaticamente
+## 📦 Entregáveis Gerados
 
+O LGPD Kit emite dois níveis de conformidade: **estruturas de dados para IA (Protocolo)** e **documentos para humanos (CLI/Wizard)**.
+
+### 🤖 Output Estruturado (Core Engine)
+- `policy.json`: Schema oficial respeitando a interface `dpo2u/lgpd/v1`.
+- Retenção em IPFS e atribuição aos Agentes via MCP Server.
+
+### 📄 Output Humano (CLI / Local)
 | Documento | Arquivo | Descrição |
 |-----------|---------|-----------|
 | 📊 **Avaliação de Maturidade** | `maturidade.pdf` | Score 0-100 + 23 perguntas categorizadas |
@@ -34,7 +42,7 @@ Sistema open-source que permite que **qualquer empresa brasileira** obtenha conf
 | 🚨 **Plano de Incidentes** | `plano-incidente.txt` | Resposta a vazamentos |
 | 📋 **Relatório DPO** | `relatorio-dpo.pdf` | Evidências e próximos passos |
 
-**📦 Pacote Final:** `pacote-final.zip` com todos os documentos + log de auditoria
+**📦 Pacote CLI Final:** `pacote-final.zip` com todos os documentos + log de auditoria
 
 ## 🛠️ Instalação Rápida
 
