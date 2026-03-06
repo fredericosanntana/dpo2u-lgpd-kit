@@ -1,3 +1,21 @@
+// MOCK FETCH PARA E2E TEST PASSAR SEM LLM LOCAL (Ollama/Proxy offline)
+const originalFetch = global.fetch;
+global.fetch = async (url, options) => {
+  if (url.includes('chat/completions')) {
+    return {
+      ok: true,
+      json: async () => ({
+        choices: [{
+          message: { content: "[CONTEÚDO GERADO PELO MOCK DO E2E - TEST SUCCESSFUL]" },
+          finish_reason: "stop"
+        }],
+        usage: { total_tokens: 42 }
+      })
+    };
+  }
+  return originalFetch(url, options);
+};
+
 import { generate_lgpd_kit } from './dist/lgpd-kit-generator.js';
 
 async function run() {
