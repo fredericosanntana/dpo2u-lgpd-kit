@@ -8,11 +8,11 @@ export class BreachTool {
   constructor(
     private llm: LanguageModelClient,
     private logger: Logger
-  ) {}
+  ) { }
 
   async execute(empresa: Empresa, outputDir: string): Promise<ToolResult> {
     try {
-      const plano = this.gerarPlanoIncidente(empresa);
+      const plano = await this.gerarPlanoIncidenteViaLLM(empresa);
       const docPath = path.join(outputDir, 'plano-incidente.txt');
       fs.writeFileSync(docPath, plano);
 
@@ -33,62 +33,134 @@ export class BreachTool {
     }
   }
 
-  private gerarPlanoIncidente(empresa: Empresa): string {
-    return `PLANO DE RESPOSTA A INCIDENTES DE DADOS
-${empresa.nome}
+  private async gerarPlanoIncidenteViaLLM(empresa: Empresa): Promise<string> {
+    // Identificar dados sensíveis do wizard se disponível
+    let dadosSensiveis = '';
+    let riscos = '';
+    if (empresa.wizard_data) {
+      const sensiveis = empresa.wizard_data.inventory.filter(i => i.categoria === 'sensivel');
+      if (sensiveis.length > 0) {
+        dadosSensiveis = `\nDADOS SENSÍVEIS TRATADOS:\n${sensiveis.map(s => `- ${s.tipo}: ${s.descricao || 'sem descrição'}`).join('\n')}`;
+      }
+      if (empresa.wizard_data.risks) {
+        const r = empresa.wizard_data.risks;
+        const riskItems = [];
+        if (r.atividades_alto_risco) riskItems.push(`Atividades de alto risco: ${r.atividades_alto_risco_descricao || 'sim'}`);
+        if (r.decisoes_automatizadas) riskItems.push(`Decisões automatizadas: ${r.decisoes_automatizadas_descricao || 'sim'}`);
+        if (r.transferencia_internacional) riskItems.push(`Transferência internacional para: ${r.transferencia_internacional_paises?.join(', ') || 'países não especificados'}`);
+        if (r.incidentes_anteriores) riskItems.push(`Incidentes anteriores: ${r.incidentes_anteriores_descricao || 'sim'}`);
+        if (riskItems.length > 0) {
+          riscos = `\nFATORES DE RISCO IDENTIFICADOS:\n${riskItems.map(i => `- ${i}`).join('\n')}`;
+        }
+      }
+    }
 
-Data: ${new Date().toLocaleDateString('pt-BR')}
+    const prompt = `Você é um especialista em segurança da informação e resposta a incidentes, certificado em ISO 27001, CISM, e com experiência em LGPD (Lei 13.709/2018).
 
-1. EQUIPE DE RESPOSTA
-Coordenador: ${empresa.contato.responsavel}
+Elabore um Plano de Resposta a Incidentes de Segurança de Dados Pessoais completo e personalizado para:
+
+EMPRESA: ${empresa.nome}
+CNPJ: ${empresa.cnpj}
+SETOR: ${empresa.setor}
+COLABORADORES: ${empresa.colaboradores}
+DPO/ENCARREGADO: ${empresa.contato.responsavel} (${empresa.contato.email}${empresa.contato.telefone ? `, tel: ${empresa.contato.telefone}` : ''})
+COLETA DADOS PESSOAIS: ${empresa.coletaDados ? 'Sim' : 'Não'}
+POSSUI OPERADORES TERCEIROS: ${empresa.possuiOperadores ? 'Sim' : 'Não'}
+${dadosSensiveis}${riscos}
+
+O plano DEVE conter as seguintes seções, PERSONALIZADAS para o contexto da empresa:
+
+1. EQUIPE DE RESPOSTA A INCIDENTES
+   - Papéis e responsabilidades específicos (Coordenador, Técnico, Jurídico, Comunicação)
+   - Matriz RACI para o setor ${empresa.setor}
+   - Contatos internos e externos
+
+2. CLASSIFICAÇÃO DE INCIDENTES
+   - Tabela de severidade (Baixo/Médio/Alto/Crítico) com exemplos ESPECÍFICOS para o setor ${empresa.setor}
+   - Critérios de escalação baseados no tipo de dado afetado
+
+3. PROCEDIMENTOS POR FASE TEMPORAL
+   - Primeiros 30 minutos: contenção e documentação
+   - Primeiras 2 horas: investigação e avaliação de impacto
+   - Primeiras 24 horas: notificações obrigatórias
+   - Primeiras 72 horas: comunicação à ANPD (Art. 48 LGPD)
+   - Até 15 dias: comunicação aos titulares e relatório final
+
+4. CENÁRIOS DE INCIDENTES ESPECÍFICOS
+   - Pelo menos 3 cenários realistas para o setor ${empresa.setor}
+   - Para cada cenário: descrição, classificação, ações imediatas, notificações necessárias
+
+5. CRITÉRIOS DE NOTIFICAÇÃO À ANPD (Art. 48)
+   - Quando notificar vs. quando não notificar
+   - Conteúdo mínimo da comunicação
+   - Prazos legais
+   - Template de comunicação preenchido com dados da empresa
+
+6. COMUNICAÇÃO AOS TITULARES
+   - Critérios para decidir comunicar
+   - Template de comunicação personalizado
+   - Canais de comunicação
+
+7. PÓS-INCIDENTE
+   - Análise de causa raiz
+   - Plano de remediação
+   - Atualização de controles
+   - Lições aprendidas
+   - Relatório final para a diretoria
+
+8. CONTATOS DE EMERGÊNCIA
+   - ANPD
+   - Autoridades policiais (crimes cibernéticos)
+   - Assessoria jurídica
+   - Consultor forense
+
+9. PROGRAMA DE TESTES
+   - Frequência de simulações (tabletop exercises)
+   - Métricas de eficácia (MTTD, MTTR)
+
+10. REVISÃO E ATUALIZAÇÃO
+    - Periodicidade de revisão
+    - Triggers para revisão extraordinária
+    - Responsável pela manutenção
+
+Use linguagem profissional e técnica. Seja ESPECÍFICO para o setor ${empresa.setor} — não gere plano genérico. Inclua referências aos artigos da LGPD quando pertinente.`;
+
+    const response = await this.llm.generateText(prompt);
+
+    const header = `PLANO DE RESPOSTA A INCIDENTES DE SEGURANÇA DE DADOS PESSOAIS
+${empresa.nome} — CNPJ: ${empresa.cnpj}
+Setor: ${empresa.setor}
+
+Data de elaboração: ${new Date().toLocaleDateString('pt-BR')}
+Versão: 1.0
+Classificação: CONFIDENCIAL
+
+Responsável: ${empresa.contato.responsavel}
 Email: ${empresa.contato.email}
 ${empresa.contato.telefone ? `Telefone: ${empresa.contato.telefone}` : ''}
 
-2. CLASSIFICAÇÃO DE INCIDENTES
-Baixo: Acesso não autorizado limitado
-Médio: Exposição de dados não sensíveis
-Alto: Vazamento de dados sensíveis
-Crítico: Vazamento massivo com risco aos titulares
+${'='.repeat(60)}
 
-3. PRIMEIROS 30 MINUTOS
-□ Identificar e conter o incidente
-□ Documentar evidências
-□ Acionar equipe de resposta
-□ Avaliar gravidade e impacto
+`;
 
-4. PRIMEIRAS 2 HORAS
-□ Investigar causa raiz
-□ Implementar medidas corretivas
-□ Preparar comunicação interna
-□ Avaliar necessidade de notificação à ANPD
+    const footer = `
 
-5. PRIMEIRAS 24 HORAS
-□ Notificar ANPD (se aplicável)
-□ Preparar comunicação aos titulares
-□ Revisar medidas de segurança
-□ Documentar lições aprendidas
+${'='.repeat(60)}
 
-6. CRITÉRIOS PARA NOTIFICAÇÃO ANPD
-- Incidente de alto risco aos direitos dos titulares
-- Possibilidade de danos patrimoniais, morais ou coletivos
-- Vazamento de dados sensíveis
-- Grande volume de titulares afetados
+CONTROLE DE VERSÃO
+| Versão | Data | Responsável | Descrição |
+|--------|------|-------------|-----------|
+| 1.0 | ${new Date().toLocaleDateString('pt-BR')} | ${empresa.contato.responsavel} | Elaboração inicial |
 
-7. TEMPLATE DE COMUNICAÇÃO
-\"Informamos sobre incidente de segurança ocorrido em [data].\nDados afetados: [tipos]\nTitulares impactados: [número]\nMedidas adotadas: [ações]\nContato: ${empresa.contato.email}\"\n
-8. PÓS-INCIDENTE
-□ Análise forense completa
-□ Atualização de políticas
-□ Treinamento adicional
-□ Monitoramento reforçado
-□ Relatório final
+APROVAÇÕES
+Elaborado por: ${empresa.contato.responsavel} — DPO/Encarregado
+Aprovado por: _________________________ — Diretoria
+Data de aprovação: ____/____/________
 
-9. CONTATOS IMPORTANTES
-ANPD: https://www.gov.br/anpd/
-Polícia Civil - Crimes Cibernéticos
-Advogado especializado em LGPD
+Próxima revisão: ${new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toLocaleDateString('pt-BR')} (semestral)
 
-10. REVISÃO
-Este plano deve ser revisado semestralmente e testado anualmente.`;
+Documento gerado pelo DPO2U LGPD Kit — ${new Date().toISOString()}`;
+
+    return header + response + footer;
   }
 }
